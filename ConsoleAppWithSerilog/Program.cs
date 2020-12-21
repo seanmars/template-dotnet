@@ -49,7 +49,7 @@ namespace ConsoleAppWithSerilog
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _appLifetime.ApplicationStarted.Register(() => OnStarted(cancellationToken));
+            _appLifetime.ApplicationStarted.Register(OnStarted, cancellationToken);
             _appLifetime.ApplicationStopping.Register(OnStopping);
             _appLifetime.ApplicationStopped.Register(OnStopped);
 
@@ -61,8 +61,10 @@ namespace ConsoleAppWithSerilog
             return Task.CompletedTask;
         }
 
-        private async void OnStarted(CancellationToken cancellationToken)
+        private async void OnStarted(object? obj)
         {
+            var cancellationToken = (CancellationToken) (obj ?? default(CancellationToken));
+
             _logger.LogInformation("App started at: {time}", DateTimeOffset.Now);
 
             await Task.Delay(500, cancellationToken);
@@ -73,7 +75,7 @@ namespace ConsoleAppWithSerilog
             _logger.LogWarning("Log Warning");
             _logger.LogError("Log Error");
             _logger.LogCritical("Log Critical");
-            
+
             _appLifetime.StopApplication();
         }
 
