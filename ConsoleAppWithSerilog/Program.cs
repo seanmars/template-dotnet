@@ -12,8 +12,15 @@ namespace ConsoleAppWithSerilog
     {
         static async Task Main(string[] args)
         {
-            await CreateHostBuilder(args)
-                .RunConsoleAsync();
+            try
+            {
+                await CreateHostBuilder(args)
+                    .RunConsoleAsync();Log.CloseAndFlush();
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
